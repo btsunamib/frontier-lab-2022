@@ -1,0 +1,72 @@
+[
+  {
+    "brand": "openai",
+    "source_url": "https://avatars.githubusercontent.com/u/14957082?v=4",
+    "official_profile": "https://github.com/openai",
+    "file": "openai.png",
+    "size": [
+      200,
+      200
+    ]
+  },
+  {
+    "brand": "eleuther",
+    "source_url": "https://avatars.githubusercontent.com/u/68924597?v=4",
+    "official_profile": "https://github.com/EleutherAI",
+    "file": "eleuther.png",
+    "size": [
+      460,
+      460
+    ]
+  },
+  {
+    "brand": "bigscience",
+    "source_url": "https://avatars.githubusercontent.com/u/82455566?v=4",
+    "official_profile": "https://github.com/bigscience-workshop",
+    "file": "bigscience.png",
+    "size": [
+      460,
+      460
+    ]
+  },
+  {
+    "brand": "meta",
+    "source_url": "https://about.meta.com/favicon.ico",
+    "official_profile": "https://github.com/meta-llama",
+    "file": "meta.png",
+    "size": [
+      32,
+      32
+    ]
+  },
+  {
+    "brand": "mistral",
+    "source_url": "https://mistral.ai/favicon.ico",
+    "official_profile": "https://github.com/mistralai",
+    "file": "mistral.png",
+    "size": [
+      256,
+      256
+    ]
+  },
+  {
+    "brand": "anthropic",
+    "source_url": "https://claude.ai/favicon.ico",
+    "official_profile": "https://github.com/anthropics",
+    "file": "anthropic.png",
+    "size": [
+      48,
+      48
+    ]
+  },
+  {
+    "brand": "deepseek",
+    "source_url": "https://www.deepseek.com/favicon.ico",
+    "official_profile": "https://github.com/deepseek-ai",
+    "file": "deepseek.png",
+    "size": [
+      225,
+      225
+    ]
+  }
+]

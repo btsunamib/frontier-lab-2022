@@ -1,0 +1,10 @@
+{
+  "name": "frontier-lab-2022",
+  "version": "2.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test tests/*.test.mjs",
+    "package:pages": "python3 scripts/package-pages.py"
+  }
+}

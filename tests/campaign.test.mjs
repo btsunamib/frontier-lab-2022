@@ -1,0 +1,30 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import * as E from '../dist/engine.js';
+import * as C from '../dist/campaign.js';
+import {availableRivals,leaderboard,BRANDS,RIVALS} from '../dist/rivals.js';
+import {existsSync,readFileSync} from 'node:fs';
+const rich=()=>{const s=E.initialState();s.cash=100000;C.ensureCampaign(s);return s;};
+const weeks=(s,count)=>{for(let i=0;i<count;i++)assert.ok(C.advance(s).ok);};
+
+test('migration preserves an existing company, models, funds, and date',()=>{const s=E.initialState();s.week=8;s.cash=485.2;s.company='旧存档的公司';const id=s.models[0].id;C.ensureCampaign(s);assert.equal(s.cash,485.2);assert.equal(s.week,8);assert.equal(s.company,'旧存档的公司');assert.equal(s.models[0].id,id);assert.ok(s.campaign.events.some(e=>e.kind==='invitation'));const count=s.campaign.events.length;C.ensureCampaign(s);assert.equal(s.campaign.events.length,count);assert.ok(E.validateSave(s));});
+
+test('opponents respect history and leaderboards compare owned and external models',()=>{assert.deepEqual(availableRivals('2022-01-03').map(r=>r.id),['gpt-j','gpt3']);assert.ok(!availableRivals('2022-11-29').some(r=>r.id==='chatgpt'));assert.ok(availableRivals('2022-11-30').some(r=>r.id==='chatgpt'));const s=rich();assert.equal(leaderboard(s).length,3);assert.equal(leaderboard(s).filter(m=>!m.isRival).length,1);assert.ok(C.runDuel(s,s.models[0].id,'gpt4').error);});
+
+test('blind battles produce exactly 500 votes and do not repeat first-win rewards',()=>{const s=rich();s.models[0].scores=[90,90,90,90,90];const first=C.runDuel(s,s.models[0].id,'gpt-j').battle;assert.equal(first.groups.length,5);assert.equal(first.groups.reduce((a,g)=>a+g.you+g.rival,0),500);assert.equal(first.winner,'you');assert.equal(first.reward,8);const cash=s.cash;const second=C.runDuel(s,s.models[0].id,'gpt-j').battle;assert.equal(second.reward,0);assert.equal(s.cash,cash-2);assert.equal(s.campaign.rewardedRivals.filter(x=>x==='gpt-j').length,1);assert.ok(E.validateSave(JSON.parse(JSON.stringify(s))));});
+
+test('different cohorts choose differently when code and character strengths diverge',()=>{const s=rich();s.models[0].scores=[30,80,70,12,10];const d=C.runDuel(s,s.models[0].id,'gpt3').battle;assert.ok(d.groups.find(g=>g.segment==='dev').you>50);assert.ok(d.groups.find(g=>g.segment==='rp').you<50);});
+
+test('story decisions have stated costs and multi-target material effects',()=>{const s=E.initialState();C.ensureCampaign(s);const e=s.campaign.events.find(e=>e.kind==='kickoff');const result=C.chooseEvent(s,e.id,'duo');assert.equal(result.preset,'both');assert.equal(s.cash,302);assert.ok(s.inventory.code&&s.inventory.roleplay);assert.ok(C.chooseEvent(s,e.id,'duo').error);assert.equal(s.cash,302);});
+
+test('commissioned data is delivered after work completes and participates in training',()=>{const s=rich();const result=C.commissionData(s,{name:'代码与角色混合任务',tokens:2,source:'expert',format:'dialogue',focus:['code','creative']});assert.ok(result.ok);assert.equal((s.customDatasets||[]).length,0);const p=s.projects.at(-1);weeks(s,p.weeks+1);assert.equal(s.customDatasets.length,1);const d=s.customDatasets[0];assert.ok(s.inventory[d.id]);assert.equal(d.weights[1],.5);assert.equal(d.weights[3],.5);assert.ok(d.quality>=80);const c=E.defaultConfig(s);c.weights={[d.id]:100};const e=E.estimate(s,c);assert.equal(e.amount,100);assert.ok(e.weights[1]>.4);assert.ok(!E.startTraining(s,c).error);assert.ok(E.validateSave(JSON.parse(JSON.stringify(s))));});
+
+test('public base integration preserves provenance, size, scores, and date availability',()=>{const s=rich();assert.ok(C.importBase(s,'mistral').error);assert.ok(C.importBase(s,'gpt-j').ok);assert.ok(C.importBase(s,'gpt-j').error);weeks(s,3);const model=s.models.find(m=>m.sourceRival==='gpt-j');assert.ok(model);assert.equal(model.params,6);assert.equal(model.activeParams,6);assert.deepEqual(model.scores,RIVALS.find(r=>r.id==='gpt-j').scores);assert.ok(!model.published);assert.ok(E.validateSave(JSON.parse(JSON.stringify(s))));});
+
+test('contracts require actual delivery, can be pursued together, and pay once',()=>{const s=rich();C.acceptContract(s,'first-tool');C.acceptContract(s,'long-story');assert.equal(s.campaign.contracts.length,2);assert.ok(C.claimContract(s,'first-tool').error);s.models[0].scores=[65,65,65,65,65];E.publishModel(s,s.models[0].id,{price:49,quota:20,budget:0});E.benchmark(s,s.models[0].id);C.checkContracts(s);assert.equal(s.campaign.contracts.find(t=>t.id==='first-tool').status,'complete');const cash=s.cash;assert.ok(C.claimContract(s,'first-tool').ok);assert.equal(s.cash,cash+28);assert.ok(C.claimContract(s,'first-tool').error);});
+
+test('promotions cost budget and cannot stack identical active campaigns',()=>{const s=rich(),cash=s.cash;assert.ok(C.startPromotion(s,'developer-week').ok);assert.equal(s.cash,cash-9);assert.ok(C.startPromotion(s,'developer-week').error);assert.ok(C.startPromotion(s,'story-night').ok);assert.equal(s.trends.filter(t=>t.promotion).length,2);});
+
+test('four years of story, markets, missions and integration remain finite and saveable',()=>{const s=rich();C.importBase(s,'gpt-j');C.acceptContract(s,'first-tool');E.publishModel(s,s.models[0].id,{price:39,quota:20,budget:0});for(let i=0;i<220;i++){weeks(s,1);assert.ok(Number.isFinite(s.cash));assert.ok(E.validateSave(JSON.parse(JSON.stringify(s))));}assert.ok(s.campaign.seenRivals.includes('gpt5'));assert.ok(s.campaign.news.length<=35);assert.ok(s.campaign.events.length<=40);assert.ok(s.models.some(m=>m.sourceRival==='gpt-j'));});
+
+test('all rival identities use downloaded official logo assets with source records',()=>{const sources=JSON.parse(readFileSync(new URL('../dist/assets/brands/sources.json',import.meta.url),'utf8'));for(const [id,brand]of Object.entries(BRANDS)){assert.ok(existsSync(new URL('../dist/'+brand.logo.replace('./',''),import.meta.url)));const source=sources.find(s=>s.brand===id);assert.ok(source);assert.match(source.source_url,/^https:\/\//);}for(const r of RIVALS)assert.ok(BRANDS[r.brand]);});
