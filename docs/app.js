@@ -1,9 +1,9 @@
-import {normalizeEndpoint,discoverModels,apiRequest,connectionError,localBridgeAvailable} from './ai-client.js?v=2.1.0';
-import {DIM,SEGMENTS,DATASETS,MODES,TECHS,EVENTS,BENCHMARKS,ROLES,INVESTORS,GLOSSARY} from './data.js?v=2.1.0';
-import * as E from './engine.js?v=2.1.0';
-import * as C from './campaign.js?v=2.1.0';
-import {RIVALS,BRANDS,availableRivals,indexScore} from './rivals.js?v=2.1.0';
-import {createImmersiveViews} from './immersive.js?v=2.1.0';
+import {normalizeEndpoint,discoverModels,apiRequest,connectionError,localBridgeAvailable} from './ai-client.js?v=2.1.1';
+import {DIM,SEGMENTS,DATASETS,MODES,TECHS,EVENTS,BENCHMARKS,ROLES,INVESTORS,GLOSSARY} from './data.js?v=2.1.1';
+import * as E from './engine.js?v=2.1.1';
+import * as C from './campaign.js?v=2.1.1';
+import {RIVALS,BRANDS,availableRivals,indexScore} from './rivals.js?v=2.1.1';
+import {createImmersiveViews} from './immersive.js?v=2.1.1';
 const $=s=>document.querySelector(s);
 const KEY='frontier-lab-save-v1';
 let state;try{const raw=JSON.parse(localStorage.getItem(KEY)||'null');state=E.validateSave(raw)?raw:E.initialState();}catch{state=E.initialState();}

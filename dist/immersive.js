@@ -1,7 +1,7 @@
-import * as E from './engine.js?v=2.1.0';
-import * as C from './campaign.js?v=2.1.0';
-import {DIM,SEGMENTS,BENCHMARKS} from './data.js?v=2.1.0';
-import {RIVALS,BRANDS,REPORTS,availableRivals,indexScore,leaderboard} from './rivals.js?v=2.1.0';
+import * as E from './engine.js?v=2.1.1';
+import * as C from './campaign.js?v=2.1.1';
+import {DIM,SEGMENTS,BENCHMARKS} from './data.js?v=2.1.1';
+import {RIVALS,BRANDS,REPORTS,availableRivals,indexScore,leaderboard} from './rivals.js?v=2.1.1';
 
 export function createImmersiveViews(u){
  const {icon,btn,chip,esc,n,money,compact,caps}=u;

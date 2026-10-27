@@ -1,6 +1,6 @@
-import * as E from './engine.js?v=2.1.0';
-import {SEGMENTS} from './data.js?v=2.1.0';
-import {RIVALS,availableRivals,indexScore,leaderboard} from './rivals.js?v=2.1.0';
+import * as E from './engine.js?v=2.1.1';
+import {SEGMENTS} from './data.js?v=2.1.1';
+import {RIVALS,availableRivals,indexScore,leaderboard} from './rivals.js?v=2.1.1';
 const uid=(s,p)=>p+'-'+(++s.serial);
 export const PEOPLE={
  researcher:{name:'虞知微',role:'研究负责人',color:'#c2a6ff',initial:'虞',line:'先让一次实验回答一个问题。我们可以同时探索几条路。'},

@@ -1,5 +1,5 @@
-import {DIM,SEGMENTS,DATASETS,MODES,TECHS,EVENTS,BENCHMARKS,ROLES,INVESTORS} from './data.js?v=2.1.0';
-import {availableRivals,indexScore} from './rivals.js?v=2.1.0';
+import {DIM,SEGMENTS,DATASETS,MODES,TECHS,EVENTS,BENCHMARKS,ROLES,INVESTORS} from './data.js?v=2.1.1';
+import {availableRivals,indexScore} from './rivals.js?v=2.1.1';
 export const VERSION=1;
 export const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
 export const sum=a=>a.reduce((x,y)=>x+y,0);
