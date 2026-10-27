@@ -7,5 +7,6 @@ with zipfile.ZipFile(downloads/'frontier-lab-local.zip','w',zipfile.ZIP_DEFLATED
  for name in ['start-local.py','start-windows.bat','LOCAL_README.md']:archive.write(root/name,name)
  for path in sorted(dist.rglob('*')):
   if path.is_file() and 'downloads' not in path.relative_to(dist).parts:archive.write(path,path.relative_to(root).as_posix())
-shutil.copytree(dist,root/'docs',dirs_exist_ok=True)
+shutil.rmtree(root/'docs',ignore_errors=True)
+shutil.copytree(dist,root/'docs')
 print('Pages files and local connector package ready.')
